@@ -16,6 +16,7 @@ google_adurl_regex = re.compile('adurl=(.*?)"')
 google_url_regex = re.compile('url\?q=(?!http://webcache)(.*?)&amp;sa=')
 email_regex = re.compile('([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4})', re.IGNORECASE)
 url_regex = re.compile('<a\s.*?href=[\'"](.*?)[\'"].*?>', re.IGNORECASE)
+skip_url_regex = re.compile('^[^/]*:')
 # Below url_regex will run into 'Castrophic Backtracking'!
 # http://stackoverflow.com/questions/8010005/python-re-infinite-execution
 # url_regex = re.compile('<a\s(?:.*?\s)*?href=[\'"](.*?)[\'"].*?>')
@@ -182,9 +183,12 @@ def find_links_in_html_with_same_hostname(url, html):
 			if link.startswith("/"):
 				link_set.add('http://'+url.netloc+link)
 			elif link.startswith("http") or link.startswith("https"):
-				if (link.find(url.netloc)):
+				path_slash_pos = link.find('/', 10)
+				path_slash_pos = path_slash_pos if path_slash_pos != -1 else None
+
+				if (link.find(url.netloc, 0, path_slash_pos) != -1):
 					link_set.add(link)
-			elif link.startswith("#"):
+			elif link.startswith("#") or skip_url_regex.match(link) is not None:
 				continue
 			else:
 				link_set.add(urlparse.urljoin(url.geturl(),link))
