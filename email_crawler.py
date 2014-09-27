@@ -13,9 +13,9 @@ logging.config.dictConfig(LOGGING)
 logger = logging.getLogger("crawler_logger")
 
 google_adurl_regex = re.compile('adurl=(.*?)"')
-google_url_regex = re.compile('url\?q=(.*?)&amp;sa=')
+google_url_regex = re.compile('url\?q=(?!http://webcache)(.*?)&amp;sa=')
 email_regex = re.compile('([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4})', re.IGNORECASE)
-url_regex = re.compile('<a\s.*?href=[\'"](.*?)[\'"].*?>')
+url_regex = re.compile('<a\s.*?href=[\'"](.*?)[\'"].*?>', re.IGNORECASE)
 # Below url_regex will run into 'Castrophic Backtracking'!
 # http://stackoverflow.com/questions/8010005/python-re-infinite-execution
 # url_regex = re.compile('<a\s(?:.*?\s)*?href=[\'"](.*?)[\'"].*?>')
